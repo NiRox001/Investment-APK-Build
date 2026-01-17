@@ -11,8 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. 强力清理磁盘空间
-      # 这一步至关重要，因为编译 Pandas 需要巨大的临时空间，否则会报错 "No space left"
+      # 1. 清理磁盘空间 (这一步必须保留，否则编译 Pandas 必炸)
       - name: Free Disk Space
         uses: jlumbroso/free-disk-space@main
         with:
@@ -24,16 +23,19 @@ jobs:
           docker-images: true
           swap-storage: true
 
-      # 2. 构建 APK
-      # 修复点 A: 插件名修正为 ArtemSBulgakov/buildozer-action@v1 (去掉了错误的 -v1 后缀)
-      # 修复点 B: 版本改为 latest (解决 Docker 拉取失败的问题)
+      # 2. 直接使用官方 Docker 镜像构建 (绕过坏掉的插件)
       - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
-        with:
-          command: buildozer android debug
-          buildozer_version: latest
-          workdir: .
+        run: |
+          # 修正权限，让 Docker 容器有权写入当前目录
+          sudo chown -R 1000:1000 .
+          
+          # 这是一个“核武器”级别的命令，直接调用官方镜像进行编译
+          # --rm: 跑完就删，不占地
+          # -v: 把当前代码挂载进去
+          docker run --rm -v "$(pwd):/home/user/hostcwd" kivy/buildozer:latest buildozer android debug
+          
+          # 编译完把文件权限改回来，否则 Upload 步骤读不到文件
+          sudo chown -R $USER:$USER .
 
       # 3. 上传 APK
       - name: Upload APK
