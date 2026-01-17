@@ -11,7 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. 强力清理磁盘空间 (Pandas/Numpy 编译需要极大的空间，这步至关重要)
+      # 1. 强力清理磁盘空间
+      # 这一步至关重要，因为编译 Pandas 需要巨大的临时空间，否则会报错 "No space left"
       - name: Free Disk Space
         uses: jlumbroso/free-disk-space@main
         with:
@@ -23,16 +24,18 @@ jobs:
           docker-images: true
           swap-storage: true
 
-      # 2. 构建 APK (已修复插件名和镜像版本)
+      # 2. 构建 APK
+      # 修复点 A: 插件名修正为 ArtemSBulgakov/buildozer-action@v1 (去掉了错误的 -v1 后缀)
+      # 修复点 B: 版本改为 latest (解决 Docker 拉取失败的问题)
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
           command: buildozer android debug
-          buildozer_version: stable
+          buildozer_version: latest
           workdir: .
 
-      # 3. 上传构建好的 APK
+      # 3. 上传 APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
