@@ -1,0 +1,39 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1. 清理磁盘空间 (为了 Pandas 编译)
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: false
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      # 2. 开始构建 (修正了插件名称)
+      - name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          command: buildozer android debug
+          buildozer_version: master
+
+      # 3. 上传 APK
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: investment-app
+          path: bin/*.apk
