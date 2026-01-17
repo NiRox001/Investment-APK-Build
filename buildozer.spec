@@ -15,13 +15,13 @@ source.dir = .
 # (list) Source files to include (let empty to include all the files)
 source.include_exts = py,png,jpg,kv,atlas,xlsx,json
 
-# (list) Application requirements
-# 注意：这里必须包含 pandas, numpy, openpyxl, requests
-requirements = python3,kivy==2.3.0,requests,urllib3,pandas,numpy,openpyxl,openssl
+# (str) Application versioning (method 1)
+# 之前报错就是因为少了这行 version = 1.0
+version = 1.0
 
-# (str) Custom source folders for requirements
-# Sets custom source for any requirements with recipes
-# requirements.source.kivy = ../../kivy
+# (list) Application requirements
+# comma separated e.g. requirements = sqlite3,kivy
+requirements = python3,kivy==2.3.0,requests,urllib3,pandas,numpy,openpyxl,openssl
 
 # (str) Presplash of the application
 # presplash.filename = %(source.dir)s/data/presplash.png
