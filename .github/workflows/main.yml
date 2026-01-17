@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. 清理磁盘空间 (为了 Pandas 编译)
+      # 1. 清理磁盘空间 (Pandas 编译需要巨大空间，这步不能省)
       - name: Free Disk Space
         uses: jlumbroso/free-disk-space@main
         with:
@@ -23,13 +23,14 @@ jobs:
           docker-images: true
           swap-storage: true
 
-      # 2. 开始构建 (修正了插件名称)
+      # 2. 开始构建 (已修复版本号问题)
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
           command: buildozer android debug
-          buildozer_version: master
+          buildozer_version: stable
+          workdir: .
 
       # 3. 上传 APK
       - name: Upload APK
