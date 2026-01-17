@@ -16,12 +16,11 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,xlsx,json
 
 # (str) Application versioning (method 1)
-# === 修复点：补上了缺失的版本号 ===
 version = 1.0
 
 # (list) Application requirements
-# comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy==2.3.0,requests,urllib3,pandas,numpy,openpyxl,openssl
+# 优化点 1: 去掉了 openssl (避免冲突)，保留 pandas 必须的 numpy
+requirements = python3,kivy==2.3.0,requests,urllib3,pandas,numpy,openpyxl
 
 # (str) Presplash of the application
 # presplash.filename = %(source.dir)s/data/presplash.png
@@ -49,18 +48,17 @@ android.minapi = 21
 android.ndk = 25b
 
 # (bool) If True, then skip trying to update the Android sdk
-# This can be useful to avoid excess internet downloads or save time
-# when an update is due and you just want to test/build your package
 android.skip_update = False
 
 # (bool) If True, then automatically accept SDK license
-# agreements. This is intended for automation only. If set to False,
-# the default, you will be shown the license when first running
-# buildozer.
 android.accept_sdk_license = True
 
 # (str) The entry point of your application
 # entrypoint = main.py
+
+# 优化点 2: 显式指定只编译 arm64-v8a (减少 GitHub Actions 一半的压力)
+# 现在的手机基本都是 64 位的，这足够用了
+android.archs = arm64-v8a
 
 [buildozer]
 
