@@ -16,7 +16,7 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,xlsx,json
 
 # (str) Application versioning (method 1)
-# 之前报错就是因为少了这行 version = 1.0
+# === 修复点：补上了缺失的版本号 ===
 version = 1.0
 
 # (list) Application requirements
