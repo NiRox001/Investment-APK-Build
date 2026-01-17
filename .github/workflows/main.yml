@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. 清理磁盘空间 (这一步必须保留，否则编译 Pandas 必炸)
+      # 1. 清理磁盘空间 (保留)
       - name: Free Disk Space
         uses: jlumbroso/free-disk-space@main
         with:
@@ -23,18 +23,16 @@ jobs:
           docker-images: true
           swap-storage: true
 
-      # 2. 直接使用官方 Docker 镜像构建 (绕过坏掉的插件)
+      # 2. 构建 APK
       - name: Build with Buildozer
         run: |
-          # 修正权限，让 Docker 容器有权写入当前目录
+          # 修正权限
           sudo chown -R 1000:1000 .
           
-          # 这是一个“核武器”级别的命令，直接调用官方镜像进行编译
-          # --rm: 跑完就删，不占地
-          # -v: 把当前代码挂载进去
-          docker run --rm -v "$(pwd):/home/user/hostcwd" kivy/buildozer:latest buildozer android debug
+          # === 修复点：去掉了多余的 'buildozer' 单词，直接写 'android debug' ===
+          docker run --rm -v "$(pwd):/home/user/hostcwd" kivy/buildozer:latest android debug
           
-          # 编译完把文件权限改回来，否则 Upload 步骤读不到文件
+          # 权限改回
           sudo chown -R $USER:$USER .
 
       # 3. 上传 APK
